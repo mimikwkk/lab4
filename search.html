@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dictionary Search</title>
+</head>
+<body>
+    <h1>Dictionary Search</h1>
+    <form id="searchForm">
+        <input type="text" id="searchInput" placeholder="Enter word">
+        <button type="submit">Search</button>
+    </form>
+    <div id="displayArea"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('searchForm').addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent the form from submitting traditionally
+
+                const searchTerm = document.getElementById('searchInput').value.trim();
+                const displayArea = document.getElementById('displayArea');
+
+                // Simple input validation
+                if (!searchTerm || !isNaN(searchTerm)) {
+                    displayArea.textContent = 'Please enter a valid, non-numeric search term.';
+                    return;
+                }
+
+                // Use Fetch API to send the request to your backend
+                fetch(`/api/definitions/?word=${encodeURIComponent(searchTerm)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.found) {
+                            displayArea.textContent = `${data.term}: ${data.definition}`;
+                        } else {
+                            displayArea.textContent = `Request# ${data.requestId}, word '${data.term}' not found!`;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        displayArea.textContent = 'An error occurred while processing your request.';
+                    });
+            });
+        });
+    </script>
+</body>
+</html>
