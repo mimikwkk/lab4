@@ -1,4 +1,4 @@
-<!-- ChatGPT was used in the process of this lab for learning purposes -->
+<!-- ChatGPT was used in the process of this lab for learning purposes
 
 <!DOCTYPE html>
 <html lang="en">
@@ -30,7 +30,7 @@
                 }
 
                 // Use Fetch API to send the request to your backend
-                fetch(`https://4537-lab5-v6.vercel.app/api/definitions/?word=${encodeURIComponent(searchTerm)}`, {
+                fetch(`https://4537-lab5-v6.vercel.app`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
@@ -53,6 +53,61 @@
                 });
             });
         });
+    </script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Word</title>
+</head>
+<body>
+    <form id="searchForm">
+        <label for="searchInput">Search Word:</label>
+        <input type="text" id="searchInput">
+        <button type="submit">Search</button>
+    </form>
+
+    <div id="searchResult"></div>
+
+    <script>
+        const searchForm = document.getElementById("searchForm");
+        if (searchForm) {
+        searchForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+            const word = document.getElementById("searchInput").value;
+
+            const xhr = new XMLHttpRequest();
+            xhr.open(
+            "GET",
+            //vercel url
+            `https://4537-lab5-v6.vercel.app/api/definitions?word=${word}`,
+            true
+            );
+            xhr.onload = function () {
+            const response = JSON.parse(xhr.responseText);
+            if (xhr.status === 200) {
+                document.getElementById("searchResult").innerText =
+                `Data from JSON: \n` +
+                `Request Number: ${response.requestNumber}\n` +
+                `Word: ${response.word}\n` +
+                `Description: ${response.definition}`;
+            } else {
+                document.getElementById("searchResult").innerText =
+                `${response.message}\n` +
+                `Request Number: ${response.requestNumber}`;
+            }
+            };
+            xhr.onerror = function () {
+            document.getElementById("searchResult").innerText =
+                "Request failed. Please try again later.";
+            };
+            xhr.send();
+        });
+        }
     </script>
 </body>
 </html>

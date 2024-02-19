@@ -1,4 +1,4 @@
-<!-- ChatGPT was used in the process of this lab for learning purposes -->
+<!-- ChatGPT was used in the process of this lab for learning purposes
 
 <!DOCTYPE html>
 <html lang="en">
@@ -87,5 +87,51 @@
         });
     </script>
     
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Word</title>
+</head>
+<body>
+    <form id="storeForm">
+        <label for="wordInput">Word:</label>
+        <input type="text" id="wordInput">
+        <label for="messageInput">Definition:</label>
+        <input type="text" id="messageInput">
+        <button type="submit">Store</button>
+    </form>
+
+    <script>
+        const storeForm = document.getElementById("storeForm");
+        if (storeForm) {
+        storeForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+            const word = document.getElementById("wordInput").value;
+            const definition = document.getElementById("messageInput").value;
+
+            const xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
+            xhr.open("POST", "i", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onload = function () {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                const response = JSON.parse(xhr.responseText);
+                alert(response.message);
+            } else {
+                alert("Failed to store. Please try again later.");
+            }
+            };
+            xhr.onerror = function () {
+            alert("Request failed. Please try again later.");
+            };
+            xhr.send(JSON.stringify({ word: word, definition: definition }));
+        });
+        }
+    </script>
 </body>
 </html>
