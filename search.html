@@ -26,7 +26,7 @@
 
                 // input validation
                 if (!searchTerm || !isNaN(searchTerm)) {
-                    displayArea.textContent = 'Please enter a valid, non-numeric search term.';
+                    displayArea.textContent = UIStrings.enterWordError;
                     return;
                 }
 
