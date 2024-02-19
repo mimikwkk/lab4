@@ -23,29 +23,72 @@
     <div id="feedback"></div>
 
     <script>
-        function handleSubmit(event) {
-            event.preventDefault();
-            const word = document.getElementById('word').value.trim();
-            const definition = document.getElementById('definition').value.trim();
-            const feedback = document.getElementById('feedback');
-            const wordRegex = /^[A-Za-z]+$/; // Regex for letters only
-            const definitionMinLength = 5; 
-    
-            if (!wordRegex.test(word)) {
-                feedback.textContent = 'Failure: The word should contain letters only.';
-                feedback.style.color = 'red';
-                return;
-            }
-    
-            if (definition.length < definitionMinLength || !isNaN(definition)) {
-                feedback.textContent = 'Failure: Please provide a more detailed definition (at least 5 characters) and ensure it is not just a number.';
-                feedback.style.color = 'red';
-                return;
-            }
-    
-            feedback.textContent = 'Success: Your entry is valid.';
-            feedback.style.color = 'green';
-        }
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('definitionForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const word = document.getElementById('word').value.trim();
+                const definition = document.getElementById('definition').value.trim();
+                const feedback = document.getElementById('feedback');
+
+                // Validation checks
+                const wordRegex = /^[A-Za-z]+$/; // Regex for letters only
+                const definitionMinLength = 5;
+
+                if (!wordRegex.test(word)) {
+                    feedback.textContent = 'Failure: The word should contain letters only.';
+                    feedback.style.color = 'red';
+                    return;
+                }
+
+                if (definition.length < definitionMinLength || !isNaN(definition)) {
+                    feedback.textContent = 'Failure: Please provide a more detailed definition (at least 5 characters) and ensure it is not just a number.';
+                    feedback.style.color = 'red';
+                    return;
+                }
+
+                // Fetch API to send the POST request to your backend
+                fetch('https://4537-lab5-v6.vercel.app/api/definitions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ word, definition })
+                })
+                .then(response => {
+                    // Check if the response status code is 201 (Created)
+                    if (response.status === 201) {
+                        return response.json().then(data => ({
+                            status: 'success',
+                            message: data.message + (data.requestNumber ? ` Request number: ${data.requestNumber}` : ''),
+                        }));
+                    }
+                    // Check if the response status code is 409 (Conflict)
+                    else if (response.status === 409) {
+                        return response.json().then(data => ({
+                            status: 'error',
+                            message: data.message,
+                        }));
+                    }
+                    // Handle other statuses or unexpected conditions
+                    else {
+                        return Promise.reject(new Error('An unexpected error occurred.'));
+                    }
+                })
+                .then(data => {
+                    // Use the data.status to determine if it was a success or error for further actions
+                    const feedback = document.getElementById('feedback');
+                    feedback.textContent = data.message;
+                    feedback.style.color = data.status === 'success' ? 'green' : 'red';
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    const feedback = document.getElementById('feedback');
+                    feedback.textContent = 'An error occurred while processing your request.';
+                    feedback.style.color = 'red';
+                });
+            });
+        });
     </script>
     
 </body>
