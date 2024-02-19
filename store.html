@@ -48,8 +48,8 @@
                 return;
             }
 
-            // Fetch API to send the POST request to your backend
-            fetch('https://4537-lab5-v6.vercel.app', { // Make sure the URL is correct
+            // Fetch API to send the POST request to backend
+            fetch('https://4537-lab5-v6.vercel.app', { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -57,7 +57,7 @@
                 body: JSON.stringify({ word, definition })
             })
             .then(response => {
-                if (response.status === 201) {
+                if (response.status === 201 || response.status === 200) {
                     return response.json().then(data => ({
                         status: 'success',
                         message: data.message + (data.requestNumber ? ` Request number: ${data.requestNumber}` : ''),
