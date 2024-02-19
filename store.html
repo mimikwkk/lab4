@@ -76,9 +76,9 @@
                 feedback.style.color = data.status === 'success' ? 'green' : 'red';
             })
             .catch(error => {
-                console.error('Fetch error:', error);
-                feedback.textContent = 'An error occurred while processing your request.';
-                feedback.style.color = 'red';
+            console.error('Fetch detailed error:', error);
+            feedback.textContent = `Detailed error: ${error.message || error.toString()}`;
+            feedback.style.color = 'red';
             });
         }
 
